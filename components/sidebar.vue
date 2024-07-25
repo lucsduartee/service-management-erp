@@ -11,14 +11,17 @@
 
         <v-divider></v-divider>
 
-        <v-list-item prepend-icon="mdi-email" value="inbox">
-          <NuxtLink to="/">Obras</NuxtLink>
+        <v-list-item prepend-icon="mdi-home" value="home">
+          <NuxtLink to="/">Home</NuxtLink>
+        </v-list-item>
+        <v-list-item prepend-icon="mdi-cogs" value="services">
+          <NuxtLink to="/services">Serviços</NuxtLink>
         </v-list-item>
         <v-list-item
           prepend-icon="mdi-account-supervisor-circle"
-          value="supervisors"
+          value="accountsManagement"
         >
-          <NuxtLink to="/proventos">Cadastro de usuários</NuxtLink>
+          <NuxtLink to="/accounts-management">Gerenciador de contas</NuxtLink>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
