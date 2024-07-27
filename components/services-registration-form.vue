@@ -6,7 +6,7 @@
     ></v-text-field>
     <v-text-field
       v-model="totalPrice"
-      label="Nome"
+      label="Valor total disponibilizado"
     ></v-text-field>
 
     <v-btn>Cadastrar</v-btn>
