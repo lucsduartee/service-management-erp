@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-10">Serviços</h1>
     <tabs />
-    <v-divider class="my-10" />
+    <v-divider class="my-5" />
     <services-registration-form v-show="selectedTab === 'createService'"/>
     <services-table v-show="selectedTab === 'listService'" />
 </div>
@@ -16,6 +16,4 @@ const tabsStore = useTabsStore();
 const { pages } = storeToRefs(tabsStore);
 
 const selectedTab = computed(() => pages.value.find(page => page.name === name).selectedTab);
-console.log('selectedTab', selectedTab)
-
 </script>

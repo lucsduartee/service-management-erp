@@ -4,17 +4,17 @@ export const useTabsStore = defineStore('tabs', {
       {
         name: 'services',
         selectedTab: 'createService',
-        tabsTitles: {
+        tabs: {
           createService: 'Cadastrar serviço',
           listService: 'Listar serviços',
         },
       },
       {
-        name: 'accountsManagement',
-        selectedTab: '',
-        tabsTitles: {
-          createService: 'Cadastrar usuário',
-          listService: 'Listar usuários',
+        name: 'accounts-management',
+        selectedTab: 'createUser',
+        tabs: {
+          createUser: 'Cadastrar usuário',
+          listUser: 'Listar usuários',
         },
       },
     ],
