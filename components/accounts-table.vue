@@ -3,7 +3,7 @@
     <template v-slot:top>
       <v-dialog>
         <v-card>
-          <v-card-title>{{ 'Blé' }}</v-card-title>
+          <v-card-title>{{ "Blé" }}</v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
@@ -24,30 +24,30 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-icon class="me-2" size="small" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon size="small" @click="deleteItem(item)">
-        mdi-delete
-      </v-icon>
+      <NuxtLink :to="{ name: 'accounts-management-id', params: { id: item.id } }">
+        <v-icon class="me-2" size="small" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+      </NuxtLink>
+      <v-icon size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
   </v-data-table>
 </template>
 
 <script setup>
-  const headers = ref([
-    { title: 'ID', value: 'id' },
-    { title: 'Nome', value: 'name' },
-    { title: 'Email', value: 'email' },
-    { title: 'Ações', value: 'actions' },
-  ]);
+const headers = ref([
+  { title: "ID", value: "id" },
+  { title: "Nome", value: "name" },
+  { title: "Email", value: "email" },
+  { title: "Ações", value: "actions" },
+]);
 
-  const items = ref([]);
+const items = ref([]);
 
-  onMounted(() => {
-    items.value = [
-      { id: 1, name: 'João', email: 'joao@gmail.com' },
-      { id: 2, name: 'Maria', email: 'maria@gmail.com' },
-    ];
-  });
+onMounted(() => {
+  items.value = [
+    { id: 1, name: "João", email: "joao@gmail.com" },
+    { id: 2, name: "Maria", email: "maria@gmail.com" },
+  ];
+});
 </script>

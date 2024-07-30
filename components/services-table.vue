@@ -24,12 +24,12 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-icon class="me-2" size="small" @click="editItem(item)">
-        mdi-eye-outline
-      </v-icon>
-      <v-icon size="small" @click="deleteItem(item)">
-        mdi-pencil
-      </v-icon>
+      <NuxtLink :to="{ name: 'services-id', params: { id: item.id } }">
+        <v-icon class="me-2" size="small" @click="editItem(item)">
+          mdi-eye-outline
+        </v-icon>
+      </NuxtLink>
+      <v-icon size="small" @click="deleteItem(item)"> mdi-pencil </v-icon>
     </template>
   </v-data-table>
 </template>
@@ -45,6 +45,10 @@ const headers = ref([
   { title: "Ações", value: "actions" },
 ]);
 const items = ref([]);
+
+function editItem(item) {
+  console.log(item);
+}
 
 onMounted(() => {
   items.value = [
