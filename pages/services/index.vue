@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-10">Serviços</h1>
+    <h1 class="mb-10 text-2xl">Serviços</h1>
     <tabs />
     <v-divider class="my-5" />
     <services-registration-form v-show="selectedTab === 'createService'"/>

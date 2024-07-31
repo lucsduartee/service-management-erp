@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-10">Gerenciador de usuários</h1>
+    <h1 class="mb-10 text-2xl">Gerenciador de usuários</h1>
     <tabs />
     <v-divider class="my-5" />
     <accounts-registration-form v-show="selectedTab === 'createUser'"/>

@@ -1,68 +1,156 @@
 <template>
   <v-container>
-    <h1 class="my-7">Serviço {{ id }}</h1>
+    <h1 class="my-7 text-2xl">Serviço {{ id }}</h1>
 
     <v-row>
       <v-col>
-        <h3>Orçamentos</h3>
-        <v-list>
-          <v-list-item>Orçamento 1: Valor xxx,xx</v-list-item>
-          <v-list-item>Orçamento 2: Valor xxx,xx</v-list-item>
-          <v-list-item>Orçamento 2: Valor xxx,xx</v-list-item>
-        </v-list>
+        <v-card>
+          <v-card-title>Orçamentos</v-card-title>
 
-        <v-btn>Adicionar orçamento</v-btn>
-      </v-col>
-
-      <v-col>
-        <h3>Registro de propostas</h3>
-        <v-list>
-          <v-list-item>Proposta 1: Enviada no dia xx/xx</v-list-item>
-          <v-list-item>Proposta 2: Enviada no dia xx/xx</v-list-item>
-          <v-list-item>Proposta 3: Enviada no dia xx/xx</v-list-item>
-        </v-list>
-
-        <v-btn>Adicionar proposta</v-btn>
+          <v-card-item>Orçamento 1: Valor xxx,xx</v-card-item>
+          <v-card-item>Orçamento 2: Valor xxx,xx</v-card-item>
+          <v-card-item>Orçamento 2: Valor xxx,xx</v-card-item>
+          <v-card-actions>
+            <v-expansion-panels>
+              <v-expansion-panel>
+                <v-expansion-panel-title>
+                  <template v-slot:default>
+                    <v-row no-gutters>
+                      <v-col class="d-flex justify-start" cols="4">
+                        Adicionar orçamento
+                      </v-col>
+                    </v-row>
+                  </template>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-row>
+                    <v-col>
+                      <v-text-field label="Nome de referência"></v-text-field>
+                      <v-file-input label="Anexar orçamento"></v-file-input>
+                      <v-btn block>Adicionar</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-card-actions>
+        </v-card>
       </v-col>
     </v-row>
 
-    <div class="my-7">
-      <p>Nome do serviço: {{ service.name }}</p>
+    <v-row class="my-7">
+      <v-col>
+        <v-card>
+          <v-card-title>Informações</v-card-title>
+          <v-col>
+            <v-text-field
+              label="Nome do serviço"
+              v-model="service.name"
+              readonly
+            ></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field
+              label="Total disponibilizado"
+              v-model="service.totalValue"
+              readonly
+            >
+            </v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field
+              label="Total gasto"
+              v-model="service.spentValue"
+              readonly
+            ></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field
+              label="Margem bruta prevista"
+              v-model="service.grossMargin"
+            ></v-text-field>
+          </v-col>
+          <v-col>
+            <v-text-field
+              label="Total em despesas"
+              :v-model="5000"
+            ></v-text-field>
+          </v-col>
+          <v-col>
+            <v-select
+              label="Permissão"
+              :items="['Em orçamento', 'Em andamento', 'Finalizado']"
+              v-model="service.serviceStatus"
+            ></v-select>
+          </v-col>
 
-      <p>Total disponibilizado: {{ service.totalValue }}</p>
+          <v-col>
+            <v-card-actions>
+              <v-btn> Salvar alterações </v-btn>
+            </v-card-actions>
+          </v-col>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <p>Total gasto: {{ service.spentValue }}</p>
-
-      <p>Margem bruta prevista: {{ service.grossMargin }}</p>
-
-      <p>Status atual: {{ service.serviceStatus }}</p>
-
-      <p>Total em despesas: 5000</p>
-
-      <v-expansion-panels class="my-7">
-        <v-expansion-panel v-for="(despesa, index) in despesas" :key="index">
-          <v-expansion-panel-title>
-            <template v-slot:default>
-              <v-row no-gutters>
-                <v-col class="d-flex justify-start" cols="4">{{
-                  despesa.name
-                }}</v-col>
-                <v-col class="text-grey" cols="4">
-                  {{ despesa.type }}
-                </v-col>
-
-                <v-col class="text-grey" cols="4">
-                  {{ despesa.value }}
+    <v-card>
+      <v-card-title>Despesas</v-card-title>
+      <v-col>
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-title>
+              <template v-slot:default>
+                <v-row no-gutters>
+                  <v-col class="d-flex justify-start" cols="4">
+                    Adicionar despesa
+                  </v-col>
+                </v-row>
+              </template>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-row>
+                <v-col>
+                  <v-text-field label="Nome de referência"></v-text-field>
+                  <v-text-field label="Valor"></v-text-field>
+                  <v-select
+                    label="Tipo da despesa"
+                    :items="['Mão de obra', 'Equipamento', 'Material', 'Outros']"
+                  ></v-select>
+                  <v-file-input label="Anexar nota fiscal"></v-file-input>
+                  <v-btn block>Adicionar</v-btn>
                 </v-col>
               </v-row>
-            </template>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <v-btn>Ver nota fiscal</v-btn>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </div>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+      <v-col>
+        <v-expansion-panels>
+          <v-expansion-panel v-for="(despesa, index) in despesas" :key="index">
+            <v-expansion-panel-title>
+              <template v-slot:default>
+                <v-row no-gutters>
+                  <v-col class="d-flex justify-start" cols="4">{{
+                    despesa.name
+                  }}</v-col>
+                  <v-col class="text-grey" cols="4">
+                    {{ despesa.type }}
+                  </v-col>
+
+                  <v-col class="text-grey" cols="4">
+                    {{ despesa.value }}
+                  </v-col>
+                </v-row>
+              </template>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-btn class="mr-3">Ver nota fiscal</v-btn>
+              <v-btn>Deletar despesa</v-btn>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-card>
   </v-container>
 </template>
 
@@ -84,4 +172,6 @@ const despesas = ref([
   { id: 3, name: "Despesa 3", type: "Material", value: 300 },
   { id: 4, name: "Despesa 4", type: "Outros", value: 400 },
 ]);
+
+const expanded = ref(true);
 </script>
