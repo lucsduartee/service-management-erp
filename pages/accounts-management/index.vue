@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1 class="mb-10 text-2xl">Gerenciador de usuários</h1>
+    <h1 class="mb-8 text-2xl">Gerenciador de usuários</h1>
+    <breadcrumb />
     <tabs />
     <v-divider class="my-5" />
     <accounts-registration-form v-show="selectedTab === 'createUser'"/>
@@ -10,10 +11,23 @@
 
 <script setup>
 import { useTabsStore } from '~/stores/tabs';
+import { useBreadcrumbStore } from '~/stores/breadcrumb';
 
 const { name } = useRoute();
 const tabsStore = useTabsStore();
 const { pages } = storeToRefs(tabsStore);
 
+const breadcrumbStore = useBreadcrumbStore();
+
 const selectedTab = computed(() => pages.value.find(page => page.name === name).selectedTab);
+
+onMounted(() => {
+  breadcrumbStore.setInitialBreadcrumb();
+
+  breadcrumbStore.pushItem({
+    title: "Gerenciador de usuários",
+    disabled: true,
+    href: "/accounts-management",
+  });
+});
 </script>

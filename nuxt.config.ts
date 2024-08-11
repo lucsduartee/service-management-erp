@@ -9,6 +9,8 @@ export default defineNuxtConfig({
   },
   modules: [
     '@pinia/nuxt',
+    '@vee-validate/nuxt',
+    '@nuxt/test-utils/module',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error

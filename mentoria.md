@@ -233,3 +233,14 @@ useAsyncData
 ```
 Return values https://nuxt.com/docs/getting-started/data-fetching#return-values
 
+Rotas
+
+POST pra cadastro de serviço
+GET pra listar serviço
+GET pra listar orçamento
+POST pra adicionar orçamento
+GET pra trazer serviço específico
+PUT pra editar o serviço
+POST pra criar uma despesa
+GET pra trazer despesas
+

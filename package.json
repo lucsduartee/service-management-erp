@@ -7,25 +7,33 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
+    "@vee-validate/nuxt": "^4.13.2",
     "axios": "^1.7.2",
     "normalize.css": "^8.0.1",
     "nuxt": "^3.12.3",
     "pinia": "^2.1.7",
+    "vee-validate": "^3.4.15",
     "vue": "latest"
   },
   "overrides": {
     "vue": "latest"
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^3.14.0",
+    "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.19",
+    "happy-dom": "^14.12.3",
+    "playwright-core": "^1.46.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
     "vite-plugin-vuetify": "^2.0.3",
+    "vitest": "^2.0.5",
     "vuetify": "^3.6.13"
   }
 }

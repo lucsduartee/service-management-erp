@@ -1,25 +1,16 @@
 <template>
   <div>
-    <h1>Welcome to the homepage</h1>
-
-    <p> Nome: {{counterStore.name}}</p>
-
-    <p> Contador: {{counterStore.tripleCount}}</p>
-
-    <button @click="counterStore.increment">Increment</button>
-
-    <img :src="cats[0]?.url" />
+    <h1 class="mb-8 text-2xl">Bem vindo ao seu painel de gestão</h1>
+    <breadcrumb />
   </div>
 </template>
 
 <script setup>
-import { useCounterStore } from '@/stores/counter';
+import { useBreadcrumbStore } from '@/stores/breadcrumb';
 
-const counterStore = useCounterStore();
-
-const { cats } = storeToRefs(counterStore);
+const breadcrumbStore = useBreadcrumbStore();
 
 onMounted(() => {
-  // counterStore.getCats();
+  breadcrumbStore.setInitialBreadcrumb();
 });
 </script>

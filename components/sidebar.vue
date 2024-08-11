@@ -20,6 +20,7 @@
         <v-list-item
           prepend-icon="mdi-account-supervisor-circle"
           value="accountsManagement"
+          @click="log"
         >
           <NuxtLink to="/accounts-management">Gerenciador de contas</NuxtLink>
         </v-list-item>
@@ -27,6 +28,13 @@
     </v-navigation-drawer>
   </v-card>
 </template>
+
+<script setup>
+  function log() {
+    console.log('aaaaaaaaaaa')
+  }
+</script>
+
 
 <style scoped>
 .aside {
