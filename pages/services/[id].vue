@@ -36,28 +36,22 @@
           <v-col>
             <v-text-field
               label="Total disponibilizado"
-              v-model="service.totalValue"
+              v-model="service.cost"
               readonly
             >
             </v-text-field>
           </v-col>
           <v-col>
             <v-text-field
-              label="Total gasto"
-              v-model="service.spentValue"
-              readonly
-            ></v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field
               label="Margem bruta prevista"
-              v-model="service.grossMargin"
+              v-model="service.gross_margin"
             ></v-text-field>
           </v-col>
           <v-col>
             <v-text-field
               label="Total em despesas"
-              v-model="grossMargin"
+              v-model="service.spent_value"
+              readonly
             ></v-text-field>
           </v-col>
           <v-col>
@@ -79,18 +73,13 @@
 
 <script setup>
 import { useBreadcrumbStore } from "@/stores/breadcrumb";
+import { useServiceStore } from "@/stores/service";
 
+const serviceStore = useServiceStore();
 const grossMargin = ref();
 
 const route = useRoute();
-const service = ref({
-  id: 1,
-  name: "Obra número 1",
-  totalValue: 1000,
-  spentValue: 200,
-  grossMargin: 500,
-  serviceStatus: "Em orçamento",
-});
+const service = ref({});
 
 const breadcrumbStore = useBreadcrumbStore();
 
@@ -118,13 +107,16 @@ async function editService() {
   alertService.value = false;
 
   try {
-    const response = await $fetch("/api/service", {
-      method: "put",
-      body: {
-        grossMargin,
-        serviceStatus: service.value.serviceStatus,
-      },
-    });
+    const response = await $fetch(
+      `http://localhost:3001/api/service/${route.params.id}`,
+      {
+        method: "put",
+        body: {
+          grossMargin,
+          serviceStatus: service.value.serviceStatus,
+        },
+      }
+    );
 
     if (response.data.service) {
       setSuccessServiceAlertContent();
@@ -136,7 +128,7 @@ async function editService() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   breadcrumbStore.setInitialBreadcrumb();
 
   breadcrumbStore.pushItem(
@@ -151,5 +143,7 @@ onMounted(() => {
       href: `/services/${route.params.id}`,
     }
   );
+
+  service.value = await serviceStore.fetchService(route.params.id);
 });
 </script>

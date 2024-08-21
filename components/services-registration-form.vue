@@ -1,8 +1,17 @@
 <template>
   <v-form @submit.prevent="submit">
-    <v-text-field v-model="name" label="Nome"></v-text-field>
     <v-text-field
-      v-model="totalPrice"
+      v-model="name"
+      label="Nome"
+    ></v-text-field>
+
+    <v-text-field
+      v-model="description"
+      label="Breve descrição"
+    ></v-text-field>
+
+    <v-text-field
+      v-model="cost"
       type="number"
       label="Valor total disponibilizado"
     ></v-text-field>
@@ -19,15 +28,20 @@
       variant="tonal"
       closable
     >
-      'text' | 'flat' | 'elevated' | 'tonal' | 'outlined' | 'plain'
       {{ alertContent.text }}
     </v-alert>
   </v-form>
 </template>
 
 <script setup>
+import { useServiceStore } from "@/stores/service";
+
+const serviceStore = useServiceStore();
+const { services } = storeToRefs(serviceStore);
+
 const name = ref("");
-const totalPrice = ref("");
+const description = ref("");
+const cost = ref("");
 const alert = ref(false);
 
 const alertContent = reactive({
@@ -36,9 +50,9 @@ const alertContent = reactive({
   text: '',
 })
 
-const setErrorAlertContent = () => {
+const setErrorAlertContent = (message) => {
   alertContent.title = 'Ocorreu um erro';
-  alertContent.text = 'Tente novamente mais tarde';
+  alertContent.text = message;
   alertContent.color = 'red-accent-4';
 };
 
@@ -50,28 +64,31 @@ const setSuccessAlertContent = () => {
 
 const resetForms = () => {
   name.value = '';
-  totalPrice.value = null
+  description.value = null
+  cost.value = null
 }
 
 const submit = async () => {
   alert.value = false;
 
   try {
-    const service = await $fetch("/api/service", {
-      method: "POST",
+    const response = await $fetch('http://localhost:3001/api/services', {
+      method: "post",
       body: {
         name: name.value,
-        totalPrice: totalPrice.value,
+        description: description.value,
+        cost: cost.value,
       },
     });
 
-    if (service) {
+    if (response.service) {
+      services.value.push(response.service);
       setSuccessAlertContent();
       alert.value = true;
       resetForms();
     }
   } catch (e) {
-    setErrorAlertContent();
+    setErrorAlertContent(e?.data?.message);
     alert.value = true;
   }
 };

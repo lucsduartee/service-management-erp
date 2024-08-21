@@ -16,10 +16,10 @@ import { useServiceStore } from "@/stores/service";
 const headers = ref([
   { title: "ID", value: "id" },
   { title: "Nome", value: "name" },
-  { title: "Valor total", value: "totalValue" },
-  { title: "Margem bruta estimada", value: "grossMargin" },
-  { title: "Valor empreendido", value: "spentValue" },
-  { title: "Status", value: "serviceStatus" },
+  { title: "Custo", value: "cost" },
+  { title: "Margem bruta estimada", value: "gross_margin" },
+  { title: "Valor empreendido", value: "spent_value" },
+  { title: "Status", value: "status" },
   { title: "Ações", value: "actions" },
 ]);
 

@@ -133,7 +133,7 @@ async function addExpense() {
   createFormData();
 
   try {
-    const response = await $fetch("/api/expense", {
+    const response = await $fetch("http://localhost:3001/api/expenses", {
       method: "post",
       body: formData,
     });
@@ -145,7 +145,6 @@ async function addExpense() {
       resetFormData();
     }
   } catch (e) {
-    console.log('eee', e)
     setErrorExpenseAlertContent();
     alertExpense.value = true;
   }

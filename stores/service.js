@@ -7,12 +7,19 @@ export const useServiceStore = defineStore('service', {
 
   actions: {
     async fetchServices() {
-      console.log('fetching services');
-      const { data: services } = await $fetch('api/service', {
-        method: 'GET',
+      const response = await $fetch('http://localhost:3001/api/services', {
+        method: 'get',
       });
 
-      this.services = services;
+      this.services = response?.services;
+    },
+
+    async fetchService(id) {
+      const response = await $fetch(`http://localhost:3001/api/services/${id}`, {
+        method: 'get',
+      });
+
+      return response?.service
     },
   },
 });
