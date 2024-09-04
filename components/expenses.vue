@@ -31,9 +31,17 @@
                   v-model="name"
                   label="Nome de referência"
                 ></v-text-field>
-                <v-text-field v-model="value" label="Valor"></v-text-field>
+                <v-text-field
+                  v-model="value"
+                  type="number"
+                  label="Valor"
+                ></v-text-field>
+                <v-text-field
+                  v-model="total_payments"
+                  label="Quantidade de pagamentos"
+                ></v-text-field>
                 <v-select
-                  v-model="type"
+                  v-model="category"
                   label="Tipo da despesa"
                   :items="['Mão de obra', 'Equipamento', 'Material', 'Outros']"
                 ></v-select>
@@ -68,7 +76,9 @@
             </template>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <v-btn class="mr-3">Ver nota fiscal</v-btn>
+            <v-btn @click.prevent="downloadNotaFiscal(expense.id)" class="mr-3"
+              >Ver nota fiscal</v-btn
+            >
             <v-btn>Deletar despesa</v-btn>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -78,23 +88,60 @@
 </template>
 
 <script setup>
-const type = ref();
+const emit = defineEmits();
+const category = ref();
 const name = ref();
 const value = ref();
 const file = ref();
+const total_payments = ref();
 const formData = reactive(new FormData());
+
+const route = useRoute();
 
 const expenses = ref([]);
 
+const expensesSum = computed(() => {
+  return expenses.value.reduce((acc, { value }) => Number(value) + acc, 0);
+});
+
 const createFormData = () => {
   const params = {
-    type: type.value,
+    category: category.value,
     name: name.value,
     value: value.value,
+    total_payments: total_payments.value,
+    service_id: route.params.id,
     file: file.value,
   };
 
   Object.entries(params).forEach(([k, v]) => formData.append(k, v));
+};
+
+const downloadNotaFiscal = async (id) => {
+  alertExpense.value = false;
+
+  try {
+    const downloadLink = await $fetch(
+      `${$config.public.SERVICES_API_HOST}/expenses/${id}/download_nota_fiscal`,
+      {
+        method: "get",
+      }
+    );
+
+    if (downloadLink) {
+      await navigateTo(`${downloadLink}`, {
+        external: true,
+        open: {
+          target: "_blank",
+        },
+      });
+
+      return;
+    }
+  } catch (e) {
+    setErrorExpenseAlertContent(e.data.message);
+    alertExpense.value = true;
+  }
 };
 
 const alertExpense = ref(false);
@@ -105,49 +152,73 @@ const alertExpenseContent = reactive({
   text: "",
 });
 
-const setErrorExpenseAlertContent = () => {
+const setErrorExpenseAlertContent = (message) => {
   alertExpenseContent.title = "Ocorreu um erro";
-  alertExpenseContent.text = "Tente novamente mais tarde";
+  alertExpenseContent.text = message;
   alertExpenseContent.color = "red-accent-4";
 };
 
 const setSuccessExpenseAlertContent = () => {
-  alertExpenseContent.title = "Usuário atualizado com sucesso";
+  alertExpenseContent.title = "Despesa criada com sucesso";
   alertExpenseContent.text = "";
   alertExpenseContent.color = "green-accent-4";
 };
 
 const resetFormData = () => {
-  type.value = '';
-  name.value = '';
-  value.value = '';
+  category.value = "";
+  name.value = "";
+  value.value = null;
+  total_payments.value = null;
   file.value = {};
 
   formData.forEach((_, key) => {
     formData.delete(key);
   });
-}
+};
 
 async function addExpense() {
   alertExpense.value = false;
   createFormData();
 
   try {
-    const response = await $fetch("/api/expense", {
+    const response = await $fetch(`${$config.public.SERVICES_API_HOST}/expenses`, {
       method: "post",
       body: formData,
     });
 
-    if (response.data.expense) {
-      expenses.value.push({ id: expenses.value.length, name: name.value, type: type.value, value: value.value });
+    if (response.expense) {
+      const { expense } = response;
+      expenses.value.push({
+        id: expense.id,
+        name: expense.name,
+        category: expense.category,
+        value: expense.value,
+      });
+      emit("expense-value", expensesSum);
       setSuccessExpenseAlertContent();
       alertExpense.value = true;
       resetFormData();
     }
   } catch (e) {
-    console.log('eee', e)
-    setErrorExpenseAlertContent();
+    setErrorExpenseAlertContent(e.data.message);
     alertExpense.value = true;
   }
 }
+
+onMounted(async () => {
+  try {
+    const response = await $fetch(
+      `${$config.public.SERVICES_API_HOST}/services/${route.params.id}/expenses`,
+      {
+        method: "get",
+      }
+    );
+
+    expenses.value = response.expenses;
+    emit("expense-value", expensesSum);
+  } catch (e) {
+    setErrorExpenseAlertContent(e.data.message);
+    alertExpense.value = true;
+  }
+});
 </script>

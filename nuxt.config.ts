@@ -7,6 +7,11 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
+  runtimeConfig: {
+    public: {
+      SERVICES_API_HOST: process.env.SERVICES_API_HOST,
+    },
+  },
   modules: [
     '@pinia/nuxt',
     '@vee-validate/nuxt',

@@ -6,7 +6,7 @@
 
     <budgets />
 
-    <expenses />
+    <expenses @expense-value="updateServiceExpensesValue" />
 
     <v-row>
       <v-col>
@@ -36,35 +36,30 @@
           <v-col>
             <v-text-field
               label="Total disponibilizado"
-              v-model="service.totalValue"
+              v-model="service.cost"
               readonly
             >
             </v-text-field>
           </v-col>
           <v-col>
             <v-text-field
-              label="Total gasto"
-              v-model="service.spentValue"
-              readonly
-            ></v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field
               label="Margem bruta prevista"
-              v-model="service.grossMargin"
+              type="number"
+              v-model="service.gross_margin"
             ></v-text-field>
           </v-col>
           <v-col>
             <v-text-field
               label="Total em despesas"
-              v-model="grossMargin"
+              v-model="serviceExpensesValue"
+              readonly
             ></v-text-field>
           </v-col>
           <v-col>
             <v-select
               label="Status"
               :items="['Em orçamento', 'Em andamento', 'Finalizado']"
-              v-model="service.serviceStatus"
+              v-model="service.status"
             ></v-select>
           </v-col>
 
@@ -79,18 +74,17 @@
 
 <script setup>
 import { useBreadcrumbStore } from "@/stores/breadcrumb";
+import { useServiceStore } from "@/stores/service";
 
-const grossMargin = ref();
+const serviceStore = useServiceStore();
 
 const route = useRoute();
-const service = ref({
-  id: 1,
-  name: "Obra número 1",
-  totalValue: 1000,
-  spentValue: 200,
-  grossMargin: 500,
-  serviceStatus: "Em orçamento",
-});
+const service = ref({});
+const serviceExpensesValue = ref();
+
+function updateServiceExpensesValue(value) {
+  serviceExpensesValue.value = value.value;
+}
 
 const breadcrumbStore = useBreadcrumbStore();
 
@@ -102,14 +96,14 @@ const alertServiceContent = reactive({
   text: "",
 });
 
-const setErrorServiceAlertContent = () => {
+const setErrorServiceAlertContent = (message) => {
   alertServiceContent.title = "Ocorreu um erro";
-  alertServiceContent.text = "Tente novamente mais tarde";
+  alertServiceContent.text = message;
   alertServiceContent.color = "red-accent-4";
 };
 
 const setSuccessServiceAlertContent = () => {
-  alertServiceContent.title = "Usuário atualizado com sucesso";
+  alertServiceContent.title = "Serviço atualizado com sucesso";
   alertServiceContent.text = "";
   alertServiceContent.color = "green-accent-4";
 };
@@ -118,25 +112,28 @@ async function editService() {
   alertService.value = false;
 
   try {
-    const response = await $fetch("/api/service", {
-      method: "put",
-      body: {
-        grossMargin,
-        serviceStatus: service.value.serviceStatus,
-      },
-    });
+    const response = await $fetch(
+      `${$config.public.SERVICES_API_HOST}/services/${route.params.id}`,
+      {
+        method: "put",
+        body: {
+          gross_margin: service.value.gross_margin,
+          service_status: service.value.status,
+        },
+      }
+    );
 
-    if (response.data.service) {
+    if (response.service) {
       setSuccessServiceAlertContent();
       alertService.value = true;
     }
   } catch (e) {
-    setErrorServiceAlertContent();
+    setErrorServiceAlertContent(e.data.message);
     alertService.value = true;
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   breadcrumbStore.setInitialBreadcrumb();
 
   breadcrumbStore.pushItem(
@@ -151,5 +148,7 @@ onMounted(() => {
       href: `/services/${route.params.id}`,
     }
   );
+
+  service.value = await serviceStore.fetchService(route.params.id);
 });
 </script>
