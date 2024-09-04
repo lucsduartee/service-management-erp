@@ -11,8 +11,7 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="cost"
-      type="number"
+      v-model.number="cost"
       label="Valor total disponibilizado"
     ></v-text-field>
 
@@ -72,7 +71,7 @@ const submit = async () => {
   alert.value = false;
 
   try {
-    const response = await $fetch('http://localhost:3001/api/services', {
+    const response = await $fetch(`${$config.public.SERVICES_API_HOST}/services`, {
       method: "post",
       body: {
         name: name.value,

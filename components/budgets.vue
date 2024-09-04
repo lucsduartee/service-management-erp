@@ -100,7 +100,7 @@ async function addBudget() {
   createFormData();
 
   try {
-    const response = await $fetch("http://localhost:3001/api/budgets", {
+    const response = await $fetch(`${$config.public.SERVICES_API_HOST}/budgets`, {
       method: "post",
       body: formData,
     });
