@@ -50,6 +50,8 @@
 </template>
 
 <script setup>
+const config = useRuntimeConfig();
+
 const name = ref();
 const file = ref();
 const value = ref();
@@ -100,7 +102,7 @@ async function addBudget() {
   createFormData();
 
   try {
-    const response = await $fetch(`${$config.public.SERVICES_API_HOST}/budgets`, {
+    const response = await $fetch(`${config.public.SERVICES_API_HOST}/budgets`, {
       method: "post",
       body: formData,
     });

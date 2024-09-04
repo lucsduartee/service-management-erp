@@ -35,6 +35,8 @@
 <script setup>
 import { useServiceStore } from "@/stores/service";
 
+const config = useRuntimeConfig();
+
 const serviceStore = useServiceStore();
 const { services } = storeToRefs(serviceStore);
 
@@ -71,7 +73,7 @@ const submit = async () => {
   alert.value = false;
 
   try {
-    const response = await $fetch(`${$config.public.SERVICES_API_HOST}/services`, {
+    const response = await $fetch(`${config.public.SERVICES_API_HOST}/services`, {
       method: "post",
       body: {
         name: name.value,

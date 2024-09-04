@@ -1,3 +1,5 @@
+const config = useRuntimeConfig();
+
 export const useServiceStore = defineStore('service', {
   state: () => ({ services: [] }),
 
@@ -7,7 +9,7 @@ export const useServiceStore = defineStore('service', {
 
   actions: {
     async fetchServices() {
-      const services = await $fetch(`${$config.public.SERVICES_API_HOST}/services`, {
+      const services = await $fetch(`${config.public.SERVICES_API_HOST}/services`, {
         method: 'get',
       });
 
@@ -15,7 +17,7 @@ export const useServiceStore = defineStore('service', {
     },
 
     async fetchService(id) {
-      const response = await $fetch(`${$config.public.SERVICES_API_HOST}/services/${id}`, {
+      const response = await $fetch(`${config.public.SERVICES_API_HOST}/services/${id}`, {
         method: 'get',
       });
 

@@ -88,6 +88,8 @@
 </template>
 
 <script setup>
+const config = useRuntimeConfig();
+
 const emit = defineEmits();
 const category = ref();
 const name = ref();
@@ -122,7 +124,7 @@ const downloadNotaFiscal = async (id) => {
 
   try {
     const downloadLink = await $fetch(
-      `${$config.public.SERVICES_API_HOST}/expenses/${id}/download_nota_fiscal`,
+      `${config.public.SERVICES_API_HOST}/expenses/${id}/download_nota_fiscal`,
       {
         method: "get",
       }
@@ -181,7 +183,7 @@ async function addExpense() {
   createFormData();
 
   try {
-    const response = await $fetch(`${$config.public.SERVICES_API_HOST}/expenses`, {
+    const response = await $fetch(`${config.public.SERVICES_API_HOST}/expenses`, {
       method: "post",
       body: formData,
     });
@@ -208,7 +210,7 @@ async function addExpense() {
 onMounted(async () => {
   try {
     const response = await $fetch(
-      `${$config.public.SERVICES_API_HOST}/services/${route.params.id}/expenses`,
+      `${config.public.SERVICES_API_HOST}/services/${route.params.id}/expenses`,
       {
         method: "get",
       }

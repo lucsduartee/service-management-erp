@@ -75,6 +75,7 @@
 <script setup>
 import { useBreadcrumbStore } from "@/stores/breadcrumb";
 import { useServiceStore } from "@/stores/service";
+const config = useRuntimeConfig();
 
 const serviceStore = useServiceStore();
 
@@ -113,7 +114,7 @@ async function editService() {
 
   try {
     const response = await $fetch(
-      `${$config.public.SERVICES_API_HOST}/services/${route.params.id}`,
+      `${config.public.SERVICES_API_HOST}/services/${route.params.id}`,
       {
         method: "put",
         body: {
