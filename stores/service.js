@@ -14,6 +14,7 @@ export const useServiceStore = defineStore('service', {
         headers: {
           'Access-Control-Allow-Origin': '*',
         },
+        mode: 'no-cors',
       });
 
       this.services = services;
@@ -25,6 +26,7 @@ export const useServiceStore = defineStore('service', {
         headers: {
           'Access-Control-Allow-Origin': '*',
         },
+        mode: 'no-cors',
       });
 
       return response?.service
