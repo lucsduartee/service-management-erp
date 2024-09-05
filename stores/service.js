@@ -11,6 +11,9 @@ export const useServiceStore = defineStore('service', {
     async fetchServices() {
       const services = await $fetch(`${config.public.SERVICES_API_HOST}/services`, {
         method: 'get',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
       });
 
       this.services = services;
@@ -19,6 +22,9 @@ export const useServiceStore = defineStore('service', {
     async fetchService(id) {
       const response = await $fetch(`${config.public.SERVICES_API_HOST}/services/${id}`, {
         method: 'get',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
       });
 
       return response?.service
