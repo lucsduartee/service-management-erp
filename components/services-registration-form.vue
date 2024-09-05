@@ -80,6 +80,7 @@ const submit = async () => {
         description: description.value,
         cost: cost.value,
       },
+      mode: 'no-cors',
     });
 
     if (response.service) {
