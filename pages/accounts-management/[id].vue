@@ -66,8 +66,6 @@ const setSuccessAlertContent = () => {
 const submit = async () => {
   alert.value = false;
 
-  console.log('user', user)
-
   try {
     const user = await $fetch("/api/user", {
       method: "PUT",

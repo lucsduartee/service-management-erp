@@ -1,14 +1,8 @@
 <template>
   <v-form @submit.prevent="submit">
-    <v-text-field
-      v-model="name"
-      label="Nome"
-    ></v-text-field>
+    <v-text-field v-model="name" label="Nome"></v-text-field>
 
-    <v-text-field
-      v-model="description"
-      label="Breve descrição"
-    ></v-text-field>
+    <v-text-field v-model="description" label="Breve descrição"></v-text-field>
 
     <v-text-field
       v-model.number="cost"
@@ -34,8 +28,7 @@
 
 <script setup>
 import { useServiceStore } from "@/stores/service";
-
-const config = useRuntimeConfig();
+const { createItems } = useDirectusItems();
 
 const serviceStore = useServiceStore();
 const { services } = storeToRefs(serviceStore);
@@ -46,45 +39,46 @@ const cost = ref("");
 const alert = ref(false);
 
 const alertContent = reactive({
-  title: '',
-  color: '',
-  text: '',
-})
+  title: "",
+  color: "",
+  text: "",
+});
 
 const setErrorAlertContent = (message) => {
-  alertContent.title = 'Ocorreu um erro';
+  alertContent.title = "Ocorreu um erro";
   alertContent.text = message;
-  alertContent.color = 'red-accent-4';
+  alertContent.color = "red-accent-4";
 };
 
 const setSuccessAlertContent = () => {
-  alertContent.title = 'Seviço criado com sucesso';
-  alertContent.text = '';
-  alertContent.color = 'green-accent-4';
-}
+  alertContent.title = "Seviço criado com sucesso";
+  alertContent.text = "";
+  alertContent.color = "green-accent-4";
+};
 
 const resetForms = () => {
-  name.value = '';
-  description.value = null
-  cost.value = null
-}
+  name.value = "";
+  description.value = null;
+  cost.value = null;
+};
 
 const submit = async () => {
   alert.value = false;
 
   try {
-    const response = await $fetch(`${config.public.SERVICES_API_HOST}/services`, {
-      method: "post",
-      body: {
-        name: name.value,
-        description: description.value,
-        cost: cost.value,
-      },
-      mode: 'no-cors',
+    const response = await createItems({
+      collection: "services",
+      items: [
+        {
+          name: name.value,
+          description: description.value,
+          cost: cost.value,
+        },
+      ],
     });
 
-    if (response.service) {
-      services.value.push(response.service);
+    if (response[0]) {
+      services.value.push(response[0]);
       setSuccessAlertContent();
       alert.value = true;
       resetForms();

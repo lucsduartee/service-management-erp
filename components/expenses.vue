@@ -76,9 +76,14 @@
             </template>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <v-btn @click.prevent="downloadNotaFiscal(expense.id)" class="mr-3"
-              >Ver nota fiscal</v-btn
+            <NuxtLink
+              :to="`${config.public.SERVICES_API_HOST}/assets/${expense.file}?donwload`"
+              :donwload="expense.filename_download"
+              target="_blank"
+              external
             >
+              <v-btn class="mr-3"> Ver nota fiscal </v-btn>
+            </NuxtLink>
             <v-btn>Deletar despesa</v-btn>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -88,6 +93,9 @@
 </template>
 
 <script setup>
+const { $directus, $readItem, $createItem, $uploadFiles, $updateItem } = useNuxtApp();
+const { getItemById } = useDirectusItems();
+
 const config = useRuntimeConfig();
 
 const emit = defineEmits();
@@ -97,6 +105,7 @@ const value = ref();
 const file = ref();
 const total_payments = ref();
 const formData = reactive(new FormData());
+const alertExpense = ref(false);
 
 const route = useRoute();
 
@@ -106,47 +115,16 @@ const expensesSum = computed(() => {
   return expenses.value.reduce((acc, { value }) => Number(value) + acc, 0);
 });
 
-const createFormData = () => {
+const createFormData = (expense_id) => {
   const params = {
-    category: category.value,
-    name: name.value,
-    value: value.value,
-    total_payments: total_payments.value,
-    service_id: route.params.id,
+    title: name.value,
     file: file.value,
+    type: "application/pdf",
+    expense_id: expense_id,
   };
 
   Object.entries(params).forEach(([k, v]) => formData.append(k, v));
 };
-
-const downloadNotaFiscal = async (id) => {
-  alertExpense.value = false;
-
-  try {
-    const downloadLink = await $fetch(
-      `${config.public.SERVICES_API_HOST}/expenses/${id}/download_nota_fiscal`,
-      {
-        method: "get",
-      }
-    );
-
-    if (downloadLink) {
-      await navigateTo(`${downloadLink}`, {
-        external: true,
-        open: {
-          target: "_blank",
-        },
-      });
-
-      return;
-    }
-  } catch (e) {
-    setErrorExpenseAlertContent(e.data.message);
-    alertExpense.value = true;
-  }
-};
-
-const alertExpense = ref(false);
 
 const alertExpenseContent = reactive({
   title: "",
@@ -178,48 +156,80 @@ const resetFormData = () => {
   });
 };
 
+const createExpense = async () => {
+  const payload = {
+    category: category.value,
+    name: name.value,
+    value: value.value,
+    total_payments: total_payments.value,
+    services_id: route.params.id,
+  };
+
+  const expense = await $directus.request($createItem("expenses", payload));
+
+  return expense;
+};
+
 async function addExpense() {
   alertExpense.value = false;
-  createFormData();
 
   try {
-    const response = await $fetch(`${config.public.SERVICES_API_HOST}/expenses`, {
-      method: "post",
-      body: formData,
-    });
+    const expense = await createExpense();
 
-    if (response.expense) {
-      const { expense } = response;
+    if (expense) {
+      createFormData(expense.id);
+
+      const file = await $directus.request($uploadFiles(formData));
+
+      const { file: file_id } = await $directus.request(
+        $updateItem("expenses", expense.id, {
+          file: file.id,
+          fields: ["*"],
+        })
+      );
+
       expenses.value.push({
         id: expense.id,
         name: expense.name,
         category: expense.category,
         value: expense.value,
+        filename_download: file.filename_download,
+        file: file_id,
       });
+
       emit("expense-value", expensesSum);
       setSuccessExpenseAlertContent();
       alertExpense.value = true;
       resetFormData();
     }
   } catch (e) {
-    setErrorExpenseAlertContent(e.data.message);
+    setErrorExpenseAlertContent(e);
+    resetFormData();
     alertExpense.value = true;
   }
 }
 
 onMounted(async () => {
   try {
-    const response = await $fetch(
-      `${config.public.SERVICES_API_HOST}/services/${route.params.id}/expenses`,
-      {
-        method: "get",
-      }
-    );
+    // const service = await $directus.request(
+    //   $readItem("services", route.params.id, {
+    //     fields: ["*", { expenses: ["*"] }],
+    //   })
+    // );
 
-    expenses.value = response.expenses;
+    const item = await getItemById({
+      collection: "services",
+      id: route.params.id,
+      params: {
+        fields: ["*", { expenses: ["*"] }],
+      },
+    });
+
+    expenses.value = item.expenses;
+
     emit("expense-value", expensesSum);
   } catch (e) {
-    setErrorExpenseAlertContent(e.data.message);
+    setErrorExpenseAlertContent(e);
     alertExpense.value = true;
   }
 });

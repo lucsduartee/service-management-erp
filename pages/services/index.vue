@@ -32,4 +32,8 @@ onMounted(() => {
     href: "/services",
   });
 });
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>

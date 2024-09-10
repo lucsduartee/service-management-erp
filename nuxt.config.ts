@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     },
   },
   modules: [
+    'nuxt-directus',
     '@pinia/nuxt',
     '@vee-validate/nuxt',
     '@nuxt/test-utils/module',
@@ -23,6 +24,9 @@ export default defineNuxtConfig({
       })
     },
   ],
+  directus: { 
+    url: "http://localhost:8055" 
+  }, 
   css: ['~/assets/css/main.css'],
    postcss: {
     plugins: {

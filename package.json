@@ -11,6 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@directus/sdk": "^17.0.1",
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/nuxt": "^4.13.2",
@@ -29,6 +30,7 @@
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.19",
     "happy-dom": "^14.12.3",
+    "nuxt-directus": "^5.6.1",
     "playwright-core": "^1.46.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",

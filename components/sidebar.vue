@@ -11,30 +11,39 @@
 
         <v-divider></v-divider>
 
-        <v-list-item prepend-icon="mdi-home" value="home">
-          <NuxtLink to="/">Home</NuxtLink>
-        </v-list-item>
-        <v-list-item prepend-icon="mdi-cogs" value="services">
-          <NuxtLink to="/services">Serviços</NuxtLink>
-        </v-list-item>
-        <v-list-item
-          prepend-icon="mdi-account-supervisor-circle"
-          value="accountsManagement"
-          @click="log"
-        >
-          <NuxtLink to="/accounts-management">Gerenciador de contas</NuxtLink>
-        </v-list-item>
+        <NuxtLink to="/">
+          <v-list-item prepend-icon="mdi-home" value="home"> Home </v-list-item>
+        </NuxtLink>
+        <NuxtLink to="/services">
+          <v-list-item prepend-icon="mdi-cogs" value="services">
+            Serviços
+          </v-list-item>
+        </NuxtLink>
+        <NuxtLink to="/accounts-management">
+          <v-list-item
+            prepend-icon="mdi-account-supervisor-circle"
+            value="accountsManagement"
+          >
+            Gerenciador de contas
+          </v-list-item>
+        </NuxtLink>
       </v-list>
     </v-navigation-drawer>
+    <v-btn
+      type="button"
+      @click.prevent="submit"
+    >
+      Sair
+    </v-btn>
   </v-card>
 </template>
 
-<script setup>
-  function log() {
-    console.log('aaaaaaaaaaa')
-  }
+<script setup lang="ts">
+const { logout } = useDirectusAuth();
+const submit = async () => {
+  logout();
+};
 </script>
-
 
 <style scoped>
 .aside {

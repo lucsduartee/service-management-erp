@@ -75,7 +75,8 @@
 <script setup>
 import { useBreadcrumbStore } from "@/stores/breadcrumb";
 import { useServiceStore } from "@/stores/service";
-const config = useRuntimeConfig();
+
+const { $directus, $updateItem } = useNuxtApp();
 
 const serviceStore = useServiceStore();
 
@@ -113,23 +114,21 @@ async function editService() {
   alertService.value = false;
 
   try {
-    const response = await $fetch(
-      `${config.public.SERVICES_API_HOST}/services/${route.params.id}`,
-      {
-        method: "put",
-        body: {
-          gross_margin: service.value.gross_margin,
-          service_status: service.value.status,
-        },
-      }
+    const serviceUpdated = await $directus.request(
+      $updateItem("services", route.params.id, {
+        status: service.value.status,
+        gross_margin: service.value.gross_margin,
+        fields: ["*"],
+      })
     );
 
-    if (response.service) {
+    if (serviceUpdated) {
+      service.value = { ...service.value, ...serviceUpdated };
       setSuccessServiceAlertContent();
       alertService.value = true;
     }
   } catch (e) {
-    setErrorServiceAlertContent(e.data.message);
+    setErrorServiceAlertContent(e);
     alertService.value = true;
   }
 }
@@ -152,4 +151,8 @@ onMounted(async () => {
 
   service.value = await serviceStore.fetchService(route.params.id);
 });
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>
