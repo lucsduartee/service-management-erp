@@ -16,9 +16,12 @@
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/nuxt": "^4.13.2",
     "axios": "^1.7.2",
+    "cookie-universal-nuxt": "^2.2.2",
+    "js-cookie": "^3.0.5",
     "normalize.css": "^8.0.1",
     "nuxt": "^3.12.3",
     "pinia": "^2.1.7",
+    "universal-cookie": "^7.2.0",
     "vee-validate": "^3.4.15",
     "vue": "latest"
   },

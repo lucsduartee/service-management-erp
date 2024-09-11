@@ -77,6 +77,7 @@ import { useBreadcrumbStore } from "@/stores/breadcrumb";
 import { useServiceStore } from "@/stores/service";
 
 const { $directus, $updateItem } = useNuxtApp();
+const { updateItem } = useDirectusItems();
 
 const serviceStore = useServiceStore();
 
@@ -114,13 +115,22 @@ async function editService() {
   alertService.value = false;
 
   try {
-    const serviceUpdated = await $directus.request(
-      $updateItem("services", route.params.id, {
+    // const serviceUpdated = await $directus.request(
+    //   $updateItem("services", route.params.id, {
+    //     status: service.value.status,
+    //     gross_margin: service.value.gross_margin,
+    //     fields: ["*"],
+    //   })
+    // );
+
+    const serviceUpdated = await updateItem({
+      collection: "services",
+      id: route.params.id,
+      item: {
         status: service.value.status,
         gross_margin: service.value.gross_margin,
-        fields: ["*"],
-      })
-    );
+      },
+    })
 
     if (serviceUpdated) {
       service.value = { ...service.value, ...serviceUpdated };

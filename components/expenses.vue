@@ -77,7 +77,7 @@
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <NuxtLink
-              :to="`${config.public.SERVICES_API_HOST}/assets/${expense.file}?donwload`"
+              :to="`${config.public.SERVICES_API_HOST}/assets/${expense.file}?download`"
               :donwload="expense.filename_download"
               target="_blank"
               external
@@ -93,10 +93,10 @@
 </template>
 
 <script setup>
-const { $directus, $readItem, $createItem, $uploadFiles, $updateItem } = useNuxtApp();
-const { getItemById } = useDirectusItems();
+const { getItems, createItems, updateItem } = useDirectusItems();
 
 const config = useRuntimeConfig();
+const { token } = useDirectusToken();
 
 const emit = defineEmits();
 const category = ref();
@@ -157,17 +157,19 @@ const resetFormData = () => {
 };
 
 const createExpense = async () => {
-  const payload = {
-    category: category.value,
-    name: name.value,
-    value: value.value,
-    total_payments: total_payments.value,
-    services_id: route.params.id,
-  };
+  const items = [
+    {
+      category: category.value,
+      name: name.value,
+      value: value.value,
+      total_payments: total_payments.value,
+      services_id: route.params.id,
+    },
+  ];
 
-  const expense = await $directus.request($createItem("expenses", payload));
+  const expense = await createItems({ collection: "expenses", items });
 
-  return expense;
+  return expense[0];
 };
 
 async function addExpense() {
@@ -179,14 +181,27 @@ async function addExpense() {
     if (expense) {
       createFormData(expense.id);
 
-      const file = await $directus.request($uploadFiles(formData));
-
-      const { file: file_id } = await $directus.request(
-        $updateItem("expenses", expense.id, {
-          file: file.id,
-          fields: ["*"],
-        })
+      const { data: file } = await $fetch(
+        `${config.public.SERVICES_API_HOST}/files`,
+        {
+          method: "post",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+          },
+        }
       );
+
+      const { file: file_id } = await updateItem({
+        collection: "expenses",
+        id: expense.id,
+        item: {
+          file: file.id,
+        },
+        params: {
+          fields: ["*"],
+        },
+      });
 
       expenses.value.push({
         id: expense.id,
@@ -211,21 +226,26 @@ async function addExpense() {
 
 onMounted(async () => {
   try {
-    // const service = await $directus.request(
-    //   $readItem("services", route.params.id, {
-    //     fields: ["*", { expenses: ["*"] }],
-    //   })
-    // );
-
-    const item = await getItemById({
+    const item = await getItems({
       collection: "services",
-      id: route.params.id,
       params: {
-        fields: ["*", { expenses: ["*"] }],
+        filter: { id: route.params.id },
       },
     });
 
-    expenses.value = item.expenses;
+    const fetchedExpenses = await Promise.all(
+      item[0].expenses.map(async (id) => {
+        return await getItems({
+          collection: "expenses",
+          params: {
+            filter: { id: id },
+          },
+        });
+      })
+    );
+
+    const fetchedExpensesItems = fetchedExpenses.map(([item]) => item);
+    expenses.value = [...expenses.value, ...fetchedExpensesItems];
 
     emit("expense-value", expensesSum);
   } catch (e) {
