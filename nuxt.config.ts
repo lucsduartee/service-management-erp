@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     },
   ],
   directus: { 
-    url: "http://localhost:8055" 
+    url: process.env.SERVICES_API_HOST, 
   }, 
   css: ['~/assets/css/main.css'],
    postcss: {

@@ -11,7 +11,7 @@ import {
   authentication,
 } from "@directus/sdk";
 
-const directus = createDirectus('http://localhost:8055').with(authentication('cookie')).with(rest());
+const directus = createDirectus(process.env.SERVICES_API_HOST).with(authentication('cookie')).with(rest());
 
 export default defineNuxtPlugin(() => {
   return {
