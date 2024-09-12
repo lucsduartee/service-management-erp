@@ -2,7 +2,7 @@
   <v-container>
     <breadcrumb />
 
-    <h1 class="my-7 text-2xl">Serviço {{ route.params.id }}</h1>
+    <h1 class="my-7 text-h4 font-weight-bold">Serviço #{{ route.params.id }}</h1>
 
     <budgets />
 
@@ -11,8 +11,8 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-card-title>Informações</v-card-title>
-          <v-col>
+          <v-card-title class="text-h5 font-weight-bold">Informações</v-card-title>
+          <v-col v-show="alertService">
             <v-alert
               v-model="alertService"
               border="start"

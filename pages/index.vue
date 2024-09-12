@@ -2,7 +2,7 @@
   <div>
     <login-card v-if="!user"/>
     <div v-else>
-      <h1 class="mb-8 text-2xl">Bem vindo ao seu painel de gestão</h1>
+      <h1 class="mb-8 text-h5 font-weight-bold">Bem vindo ao seu painel de gestão</h1>
       <breadcrumb />
     </div>
   </div>

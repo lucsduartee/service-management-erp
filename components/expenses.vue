@@ -1,8 +1,9 @@
 <template>
   <v-card class="my-5">
-    <v-card-title>Despesas</v-card-title>
+    <v-card-title class="text-h5 font-weight-bold">Despesas</v-card-title>
     <v-col>
       <v-alert
+        class="mb-4"
         v-model="alertExpense"
         border="start"
         close-label="Close Alert"

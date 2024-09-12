@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>Orçamentos</v-card-title>
+    <v-card-title class="text-h5 font-weight-bold">Orçamentos</v-card-title>
     <v-col>
       <v-alert
         v-model="alertBudget"

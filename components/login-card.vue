@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container>
-      <v-card-title> Entre com sua conta </v-card-title>
+      <v-card-title class="text-h5 font-weight-bold"> Entre com sua conta </v-card-title>
 
       <v-form @submit.prevent="submit">
         <v-text-field v-model="email" label="Email"></v-text-field>

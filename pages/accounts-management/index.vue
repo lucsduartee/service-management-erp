@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="mb-8 text-2xl">Gerenciador de usuários</h1>
+    <h1 class="mb-8 text-h5 font-weight-bold">Gerenciador de usuários</h1>
     <breadcrumb />
     <tabs />
     <v-divider class="my-5" />
