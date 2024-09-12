@@ -3,9 +3,8 @@
     <v-navigation-drawer theme="dark" permanent>
       <v-list nav>
         <v-list-item
-          prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-          title="Birulinha"
-          nav
+          :prepend-icon="user ? 'mdi-account-check-outline' :'mdi-account-off-outline'"
+          :title="user ? user?.first_name + ' ' + user?.last_name : 'Usuário deslogado'"
         >
         </v-list-item>
 
@@ -27,21 +26,29 @@
             Gerenciador de contas
           </v-list-item>
         </NuxtLink>
+        <v-list-item
+          v-if="user"
+          @click.prevent="logoutUser"
+          prepend-icon="mdi-logout"
+          value="logout"
+        >
+          Sair
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-btn
-      type="button"
-      @click.prevent="submit"
-    >
-      Sair
-    </v-btn>
   </v-card>
 </template>
 
 <script setup lang="ts">
 const { logout } = useDirectusAuth();
-const submit = async () => {
-  logout();
+const user = useDirectusUser();
+
+const logoutUser = async () => {
+  try {
+    await logout();
+
+    return navigateTo("/");
+  } catch (e) { }
 };
 </script>
 

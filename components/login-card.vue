@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container>
-      <v-card-title> Login </v-card-title>
+      <v-card-title> Entre com sua conta </v-card-title>
 
       <v-form @submit.prevent="submit">
         <v-text-field v-model="email" label="Email"></v-text-field>
@@ -12,7 +12,7 @@
           label="Senha"
         ></v-text-field>
 
-        <v-btn type="submit">Cadastrar</v-btn>
+        <v-btn type="submit">Entrar</v-btn>
 
         <v-alert
           class="mt-10"
@@ -55,9 +55,7 @@ const submit = async () => {
   alert.value = false;
 
   try {
-    const response = await login({ email: email.value, password: password.value });
-
-    console.log("response", response);
+    await login({ email: email.value, password: password.value });
   } catch (e) {
     setErrorServiceAlertContent(e);
     alert.value = true;
