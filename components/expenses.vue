@@ -62,14 +62,16 @@
           <v-expansion-panel-title>
             <template v-slot:default>
               <v-row no-gutters>
-                <v-col class="d-flex justify-start" cols="4">{{
-                  expense.name
-                }}</v-col>
-                <v-col class="text-grey" cols="4">
+                <v-col class="d-flex justify-start">{{ expense.name }}</v-col>
+                <v-col class="text-grey">
                   {{ expense.type }}
                 </v-col>
 
-                <v-col class="text-grey" cols="4">
+                <v-col class="text-grey">
+                  {{ expense.payments_count + "/" + expense.total_payments }}
+                </v-col>
+
+                <v-col class="text-grey">
                   {{ expense.value }}
                 </v-col>
               </v-row>
@@ -84,7 +86,9 @@
             >
               <v-btn class="mr-3"> Ver nota fiscal </v-btn>
             </NuxtLink>
-            <v-btn>Deletar despesa</v-btn>
+            <v-btn @click.prevent="addPayment(expense.id)"
+              >Contabilizar pagamento</v-btn
+            >
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -207,6 +211,8 @@ async function addExpense() {
         id: expense.id,
         name: expense.name,
         category: expense.category,
+        total_payments: expense.total_payments,
+        payments_count: expense.payments_count,
         value: expense.value,
         filename_download: file.filename_download,
         file: file_id,
@@ -222,6 +228,24 @@ async function addExpense() {
     resetFormData();
     alertExpense.value = true;
   }
+}
+
+async function addPayment(expense_id) {
+  const expense = expenses.value.find((expense) => expense.id === expense_id);
+
+  const { payments_count } = await updateItem({
+    collection: "expenses",
+    id: expense_id,
+    item: {
+      payments_count: expense.payments_count + 1,
+    },
+  });
+
+  expenses.value = expenses.value
+    .map(expense => expense.id === expense_id
+      ? { ...expense, payments_count }
+      : expense,
+    );
 }
 
 onMounted(async () => {

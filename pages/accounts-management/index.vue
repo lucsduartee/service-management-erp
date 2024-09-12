@@ -30,4 +30,8 @@ onMounted(() => {
     href: "/accounts-management",
   });
 });
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>

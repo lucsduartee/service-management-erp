@@ -95,4 +95,8 @@ const submit = async () => {
     alert.value = true;
   }
 };
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>

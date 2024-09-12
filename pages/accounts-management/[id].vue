@@ -100,4 +100,8 @@ onMounted(() => {
     }
   );
 });
+
+definePageMeta({
+  middleware: ['auth']
+})
 </script>
