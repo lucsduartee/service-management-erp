@@ -41,6 +41,20 @@
                   v-model="total_payments"
                   label="Quantidade de pagamentos"
                 ></v-text-field>
+                <v-row>
+                  <v-col cols="9">
+                    <v-text-field
+                      v-model="paymentName"
+                      :label="`${paymentsName.length} boletos adicionados`"
+                      placeholder="Ex.: Boleto - DD/MM/AAAA"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn @click.prevent="addPaymentName(paymentName)"
+                      >Adicionar boleto</v-btn
+                    >
+                  </v-col>
+                </v-row>
                 <v-select
                   v-model="category"
                   label="Tipo da despesa"
@@ -69,16 +83,19 @@
                 </v-col>
 
                 <v-col class="text-grey">
-                  {{ expense.payments_count + "/" + expense.total_payments }}
-                </v-col>
-
-                <v-col class="text-grey">
                   {{ expense.value }}
                 </v-col>
               </v-row>
             </template>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
+            <v-checkbox
+              v-for="(payment, index) in expense.payments"
+              :key="index"
+              v-model="payment.status"
+              density="compact"
+              :label="payment.name"
+            ></v-checkbox>
             <NuxtLink
               :to="`${config.public.SERVICES_API_HOST}/assets/${expense.file}?download`"
               :donwload="expense.filename_download"
@@ -87,7 +104,7 @@
             >
               <v-btn class="mr-3"> Ver nota fiscal </v-btn>
             </NuxtLink>
-            <v-btn @click.prevent="addPayment(expense.id)"
+            <v-btn @click.prevent="addPayment(expense.id, expense.payments)"
               >Contabilizar pagamento</v-btn
             >
           </v-expansion-panel-text>
@@ -108,6 +125,8 @@ const category = ref();
 const name = ref();
 const value = ref();
 const file = ref();
+const paymentsName = ref([]);
+const paymentName = ref("");
 const total_payments = ref();
 const formData = reactive(new FormData());
 const alertExpense = ref(false);
@@ -155,6 +174,8 @@ const resetFormData = () => {
   value.value = null;
   total_payments.value = null;
   file.value = {};
+  paymentsName.value = [];
+
 
   formData.forEach((_, key) => {
     formData.delete(key);
@@ -172,10 +193,18 @@ const createExpense = async () => {
     },
   ];
 
-  const expense = await createItems({ collection: "expenses", items });
+  const expense = await createItems({
+    collection: "expenses",
+    items,
+  });
 
   return expense[0];
 };
+
+function addPaymentName(name) {
+  paymentsName.value.push(name);
+  paymentName.value = "";
+}
 
 async function addExpense() {
   alertExpense.value = false;
@@ -185,6 +214,15 @@ async function addExpense() {
 
     if (expense) {
       createFormData(expense.id);
+
+      const createdPayments = await Promise.all(
+        paymentsName.value.map(async (itemName) => {
+          return await createItems({
+            collection: "payments",
+            items: [{ name: itemName, expense_id: expense.id }],
+          });
+        })
+      );
 
       const { data: file } = await $fetch(
         `${config.public.SERVICES_API_HOST}/files`,
@@ -203,9 +241,6 @@ async function addExpense() {
         item: {
           file: file.id,
         },
-        params: {
-          fields: ["*"],
-        },
       });
 
       expenses.value.push({
@@ -215,6 +250,7 @@ async function addExpense() {
         total_payments: expense.total_payments,
         payments_count: expense.payments_count,
         value: expense.value,
+        payments: createdPayments.flat(),
         filename_download: file.filename_download,
         file: file_id,
       });
@@ -231,22 +267,33 @@ async function addExpense() {
   }
 }
 
-async function addPayment(expense_id) {
-  const expense = expenses.value.find((expense) => expense.id === expense_id);
+async function addPayment(expenseId, payments) {
+  try {
+    const expense = expenses.value.find((expense) => expense.id === expenseId);
 
-  const { payments_count } = await updateItem({
-    collection: "expenses",
-    id: expense_id,
-    item: {
-      payments_count: expense.payments_count + 1,
-    },
-  });
+    const { payments_count } = await updateItem({
+      collection: "expenses",
+      id: expenseId,
+      item: {
+        payments_count: expense.payments_count + 1,
+      },
+    });
 
-  expenses.value = expenses.value
-    .map(expense => expense.id === expense_id
-      ? { ...expense, payments_count }
-      : expense,
+    payments.forEach(
+      async (payment) =>
+        await updateItem({
+          collection: "payments",
+          id: payment.id,
+          item: {
+            status: payment.status,
+          },
+        })
     );
+
+    expenses.value = expenses.value.map((expense) =>
+      expense.id === expenseId ? { ...expense, payments_count } : expense
+    );
+  } catch (e) {}
 }
 
 onMounted(async () => {
@@ -264,6 +311,7 @@ onMounted(async () => {
           collection: "expenses",
           params: {
             filter: { id: id },
+            fields: "*,payments.*",
           },
         });
       })
