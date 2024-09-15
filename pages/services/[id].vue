@@ -4,7 +4,7 @@
 
     <h1 class="my-7 text-h4 font-weight-bold">Serviço #{{ route.params.id }}</h1>
 
-    <budgets />
+    <estimates />
 
     <expenses @expense-value="updateServiceExpensesValue" />
 
@@ -76,7 +76,6 @@
 import { useBreadcrumbStore } from "@/stores/breadcrumb";
 import { useServiceStore } from "@/stores/service";
 
-const { $directus, $updateItem } = useNuxtApp();
 const { updateItem } = useDirectusItems();
 
 const serviceStore = useServiceStore();
@@ -115,14 +114,6 @@ async function editService() {
   alertService.value = false;
 
   try {
-    // const serviceUpdated = await $directus.request(
-    //   $updateItem("services", route.params.id, {
-    //     status: service.value.status,
-    //     gross_margin: service.value.gross_margin,
-    //     fields: ["*"],
-    //   })
-    // );
-
     const serviceUpdated = await updateItem({
       collection: "services",
       id: route.params.id,
